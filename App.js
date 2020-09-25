@@ -21,7 +21,9 @@ const connection = mysql.createConnection({
 
 app.get('/', (req, res) => {
     console.log("Here is get")
-    const query = "select * from board order by reg_dt desc limit 10 offset ?";
+
+    let data = {};
+    let query = "select * from board order by idx desc limit 10 offset ?";
     const offset = Number(req.query.offset);
 
     connection.query(query, [offset],
@@ -30,15 +32,27 @@ app.get('/', (req, res) => {
                 console.log(err);
                 res.send(err);
             } else {
-                res.send(rows);
+                data['tableData'] = rows;
             }
         }
     );
+
+    query = "select count(*) as total from board";
+
+    connection.query(query, (err, result) => {
+        if(err) {
+            console.log(err);
+            res.send(err);
+        } else {
+            data['pageData'] = result;
+            res.json(data);
+        }
+    });
 });
 
 app.put('/boards', (req, res) => {
     console.log("Here is Put");
-    const query = "insert into board (title, note, reg_dt) values (?, ?, now())"
+    const query = "insert into board (title, note, reg_dt, chg_dt) values (?, ?, now(), now())"
     const title = req.body.title;
     const note = req.body.note;
     const params = [title, note];
