@@ -90,17 +90,28 @@ app.get('/boards/:idx', (req, res) => {
     const query = 'select * from board where idx = ?';
 
     connection.query(query, [idx], (err, result) => {
-            if(err) {
-                console.log(err);
-                res.send(err);
-            } else {
-                res.send(result);
-            }
+        if(err) {
+            console.log(err);
+            res.send(err);
+        } else {
+            res.send(result);
+        }
     });
 });
 
 app.delete('/boards/:idx', (req, res) => {
+    console.log("Here is Delete");
+    const idx = req.params.idx;
 
+    const query = 'delete from board where idx = ?';
+    connection.query(query, [idx], (err, result) => {
+        if(err) {
+            console.log(err);
+            res.send(err);
+        } else {
+            res.send(result);
+        }
+    });
 });
 
 
