@@ -50,8 +50,8 @@ app.get('/', (req, res) => {
     });
 });
 
-app.put('/boards', (req, res) => {
-    console.log("Here is Put");
+app.post('/boards', (req, res) => {
+    console.log("Here is Post");
     const query = "insert into board (title, note, reg_dt, chg_dt) values (?, ?, now(), now())"
     const title = req.body.title;
     const note = req.body.note;
@@ -66,6 +66,10 @@ app.put('/boards', (req, res) => {
             }
         }
     );
+});
+
+app.put('/boards', (req, res) => {
+    console.log("Here is Put");
 });
 
 app.get('/boards/:idx', (req, res) => {
