@@ -26,8 +26,7 @@ app.get('/', (req, res) => {
     let query = "select * from board order by idx desc limit 10 offset ?";
     const offset = Number(req.query.offset);
 
-    connection.query(query, [offset],
-        (err, rows) => {
+    connection.query(query, [offset], (err, rows) => {
             if(err) {
                 console.log(err);
                 res.send(err);
@@ -39,12 +38,12 @@ app.get('/', (req, res) => {
 
     query = "select count(*) as total from board";
 
-    connection.query(query, (err, result) => {
+    connection.query(query, (err, rows) => {
         if(err) {
             console.log(err);
             res.send(err);
         } else {
-            data['pageData'] = result;
+            data['pageData'] = rows;
             res.json(data);
         }
     });
@@ -57,19 +56,32 @@ app.post('/boards', (req, res) => {
     const note = req.body.note;
     const params = [title, note];
 
-    connection.query(query, params,
-        (err, rows) => {
+    connection.query(query, params, (err, result) => {
             if(err) {
                 res.send(err);
             } else {
-                res.send(rows);
+                res.send(result);
             }
         }
     );
 });
 
-app.put('/boards', (req, res) => {
+app.put('/boards/:idx', (req, res) => {
     console.log("Here is Put");
+    const idx = req.params.idx;
+    const title = req.body.title;
+    const note = req.body.note;
+    const params = [title, note, idx];
+
+    const query = 'update board set title = ?, note = ?, chg_dt = now() where idx = ?';
+
+    connection.query(query, params, (err, result) => {
+        if(err) {
+            res.send(err);
+        } else {
+            res.send(result);
+        }
+    })
 });
 
 app.get('/boards/:idx', (req, res) => {
@@ -77,8 +89,7 @@ app.get('/boards/:idx', (req, res) => {
     const idx = req.params.idx;
     const query = 'select * from board where idx = ?';
 
-    connection.query(query, [idx],
-        (err, result) => {
+    connection.query(query, [idx], (err, result) => {
             if(err) {
                 console.log(err);
                 res.send(err);
